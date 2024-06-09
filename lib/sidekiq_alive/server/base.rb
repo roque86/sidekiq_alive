@@ -9,18 +9,19 @@ module SidekiqAlive
       # set web server to quiet mode
       def quiet!
         logger.info("[SidekiqAlive] Setting web server to quiet mode")
-        Process.kill(QUIET_SIGNAL, @server_pid) unless @server_pid.nil?
+        @thr
+        @thr&.exit
       end
 
       private
 
       def configure_shutdown
         Kernel.at_exit do
-          next if @server_pid.nil?
+          next if @thr.nil?
 
           logger.info("Shutting down SidekiqAlive web server")
-          Process.kill(SHUTDOWN_SIGNAL, @server_pid)
-          Process.wait(@server_pid)
+          @thr&.exit
+          @thr&.join
         end
       end
 

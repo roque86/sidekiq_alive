@@ -3,7 +3,7 @@
 module SidekiqAlive
   module Redis
     class Base
-      def set(...)
+      def set(*args, **kws, &block)
         raise(NotImplementedError)
       end
 
@@ -27,8 +27,8 @@ module SidekiqAlive
         raise(NotImplementedError)
       end
 
-      def ttl(...)
-        redis { |r| r.ttl(...) }
+      def ttl(*args)
+        redis { |r| r.ttl(*args) }
       end
     end
   end

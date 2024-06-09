@@ -10,7 +10,7 @@ module SidekiqAlive
       class << self
         def run!
           logger.info("[SidekiqAlive] Starting healthcheck '#{server}' server")
-          @server_pid = ::Process.fork do
+          @thr = Thread.new do
             @handler = handler
             configure_shutdown_signal { @handler.shutdown }
             configure_quiet_signal { @quiet = Time.now }
@@ -44,7 +44,7 @@ module SidekiqAlive
           logger.error("[SidekiqAlive] #{response}")
           [404, {}, [response]]
         rescue StandardError => e
-          logger.error("[SidekiqAlive] #{response} looking for alive key. Error: #{e.message}")
+          logger.error("Rack [SidekiqAlive] #{response} looking for alive key. Error: #{e.message}")
           [500, {}, ["Internal Server Error"]]
         end
 

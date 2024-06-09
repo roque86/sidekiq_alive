@@ -9,9 +9,13 @@ module SidekiqAlive
       extend Base
 
       class << self
+        def java?
+          defined?(RUBY_PLATFORM) && RUBY_PLATFORM == 'java'
+        end
+
         def run!
           logger.info("[SidekiqAlive] Starting default healthcheck server on #{host}:#{port}")
-          @server_pid = ::Process.fork do
+          @thr = Thread.new do
             @server = new(port, host, path)
             # stop is wrapped in a thread because gserver calls synchrnonize which raises an error when in trap context
             configure_shutdown_signal { Thread.new { @server.stop } }
@@ -21,7 +25,7 @@ module SidekiqAlive
             @server.join
           end
           configure_shutdown
-          logger.info("[SidekiqAlive] Web server started in subprocess with pid #{@server_pid}")
+          logger.info("[SidekiqAlive] Web server started in subprocess with pid #{@thr&.object_id}")
 
           self
         end

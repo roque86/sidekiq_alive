@@ -34,9 +34,9 @@ module SidekiqAlive
       @queue_prefix = :"sidekiq-alive"
       @custom_liveness_probe = proc { true }
       @shutdown_callback = proc {}
-      @concurrency = Integer(ENV.fetch("SIDEKIQ_ALIVE_CONCURRENCY", 2), exception: false) || 2
+      @concurrency = 2
       @server = ENV.fetch("SIDEKIQ_ALIVE_SERVER", nil)
-      @quiet_timeout = Integer(ENV.fetch("SIDEKIQ_ALIVE_QUIET_TIMEOUT", 180), exception: false) || 180
+      @quiet_timeout = Integer(ENV.fetch("SIDEKIQ_ALIVE_QUIET_TIMEOUT", 180)) || 180
     end
 
     def registration_ttl
